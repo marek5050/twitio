@@ -1,0 +1,218 @@
+<body class="product-board"> 
+  <div id="product-board" class="clearfix">
+
+    <!--
+      Products
+      --------
+      Each item on the product board is identified by the 'product' class.
+      There are two size variations, identified by the classes 'medium' or 'large'.
+      
+      Details expansion:
+      The details expansion is operated by an id. 
+      The 'details-extra' div has an id, eg: 'details-0001'
+      This is paired with the anchor tag with class 'details-expand' which has a matching data-target of that id.
+    -->
+  
+    <div class="product large cta">
+      <div class="content">
+        <h3>Summer is here!</h3>
+        <p>We've some sumptuous new swimwear to celebrate</p>
+      </div>
+      <a href="collection.html" class="btn btn-bottom">Browse all swimwear &rarr;</a> 
+    </div>
+
+
+ <!-- ko foreach: items -->
+
+    <div data-bind="attr: {class:'product '+size()}">
+      <div class="media" data-bind="html: media">
+      
+        <!-- <small class="plabel" data-bind="text:description().substring(0,100)+'...'"></small>        -->
+      </div>
+      <div class="details">
+        <p class="name"><a  data-bind="text:name, attr:{href: url}"  target="_blank"></a></p>
+        <p class="price"><span class="total" data-bind="text: price"> </span> </p>
+      </div>
+      <a class="btn btn-bottom btn-atc" data-bind="attr: {href: url } " target="_blank">Buy at CrossFitReebok</a>
+    </div>
+
+  <!-- /ko -->
+  <div class="load-more-container">
+    <button class="btn load-more">
+      load more
+    </button>
+  </div>
+  </div>
+  <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-6 col-md-3">
+        <p>&copy; 2013 Shopfrog</p>
+        <p><a href="">terms</a> / <a href="">privacy</a> / <a href="">returns</a> / <a href="">delivery</a></p>
+      </div> <!-- //end span3 -->
+      <div class="col-sm-6 col-md-3">
+        <p>Why us?</p>
+        <p><a href="about.html">about</a> / <a href="contact.html">contact</a> / <a href="">promotions</a> / <a href="">press</a></p>
+      </div> <!-- //end span3 -->
+      <div class="col-sm-6 col-md-3">
+        <p>Social links</p>
+        <p><a href="">Facebook</a> / <a href="">Twitter</a> / <a href="">Pinterest</a></p>
+      </div> <!-- //end span3 -->
+      <div class="col-sm-6 col-md-3">
+        <p>Get exclusive offers and news</p>
+        <form class="form-inline" method="post" action="newsletter-signup.php">
+          <input id="newsletter-email" name="newsletter-email" type="text" placeholder="your email..." class="form-control">
+          <input name="submit" type="submit" value="&rarr;" class="btn">
+        </form>
+      </div> <!-- //end span3 -->           
+    </div>
+  </div>
+</footer>
+<script>
+$(function(){
+  $("body").addClass('product-board');
+});
+</script>
+
+
+<script>
+/*
+
+ASIN: "B008AZHRDA"
+BrowseNodes: Object
+CustomerReviews: Object
+DetailPageURL: "http://www.amazon.com/Reebok-Womens-Coral-Contrast-Large/dp/B008AZHRDA%3FSubscriptionId%3DAKIAJQDHUK5TEXAPUBMA%26tag%3Dwwwquickfixau-20%26linkCode%3Dxm2%26camp%3D2025%26creative%3D165953%26creativeASIN%3DB008AZHRDA"
+EditorialReviews: Object
+ImageSets: Object
+ItemAttributes: Object
+ItemLinks: Object
+LargeImage: Object
+MediumImage: Object
+OfferSummary: Object
+Offers: Object
+ParentASIN: "B00AC5V8QI"
+SimilarProducts: Object
+SmallImage: Object
+
+
+
+*/
+$(function(){
+  $("body").addClass('product-page');
+});
+
+function AmazonModel(){
+ var self = this;
+self.ASIN= ko.observable()
+, self.BrowseNodes= ko.observable()
+, self.CustomerReviews= ko.observable()
+, self.DetailPageURL= ko.observable()
+, self.EditorialReviews= ko.observable()
+, self.ImageSets= ko.observable()
+, self.ItemAttributes= ko.observable()
+, self.ItemLinks= ko.observable()
+, self.LargeImage= ko.observable()
+, self.MediumImage= ko.observable()
+, self.OfferSummary= ko.observable()
+, self.Offers= ko.observable()
+, self.ParentASIN= ko.observable()
+, self.SimilarProducts= ko.observable()
+, self.SmallImage= ko.observable()
+}
+
+function BlockModel(prop){
+ var self = this;
+   self.url = ko.observable(prop[0])
+ , self.name = ko.observable(prop[1])
+ , self.price= ko.observable(prop[2])
+ , self.description= ko.observable(prop[3])
+ , self.media= ko.observable(prop[4])
+ // , self.properties = prop[5]
+ , self.size= ko.observable(prop[5])
+ return self;
+}
+
+function PageModel(){
+  var self = this;
+  self.items = ko.observableArray(0);
+  self.wod = ko.observableArray(0);
+  self.TV = ko.observableArray(0);
+  self.currentTV = ko.observable();
+  self.changeTV = function(item){
+    self.currentTV(item);
+  }
+
+  self.addItems = function(items)
+  {
+    $.each(items, function(item){self.addItem(items[item])});
+  }
+
+  self.addItem = function(item){
+    console.log("Item: 123:  ", item);
+    var html = "";
+    if(item[4].indexOf('youtube')!= -1 ) 
+    {
+    }else{
+      html+="<img class='img-responsive' alt='"+item[1]+"' src='"+item[4]+"'>";
+    }
+    item[4] = html;
+   self.items.push(new BlockModel(item));
+  }
+  self.addNotice = function(item){
+    self.items.unshift(new BlockModel(item));
+  }
+
+  self.viewProduct = function(item){
+    return 0;
+
+  }
+
+self.addTV = function(series)
+{
+  console.log("Adding series: " , series); 
+  $.each(series, function(item)
+    {
+    var item = series[item];
+    console.log("Adding: "+ series[item]);
+    html="<iframe width='560' height='315' src='"+item[4]+"' frameborder='0' allowfullscreen /></iframe>";
+    item[4] = html;
+
+    self.TV.push(item);
+  });
+}
+
+
+  self.addAmazon = function(items){
+    // console.log("Items: ", items);
+  $.each(items, function(idx){
+
+    // console.log("Items: "+idx, items[idx]);
+   var item = items[idx];
+   var _item=[];
+   _item.push(item.DetailPageURL);
+   _item.push(item.ItemAttributes.Title);
+   var price = item.VariationSummary.LowestPrice.FormattedPrice;
+   _item.push(price);   
+   _item.push(item.ItemAttributes.Feature);
+   _item.push(item.LargeImage.URL);
+   _item.push((Math.random()*10 > 2)?'medium':'large');
+  
+  self.addItem(_item);
+
+  });
+}
+
+  var featured = <%-JSON.stringify(featured)%>;
+  var pageAmazon = <%-JSON.stringify(amazonFeatured)%>;
+  var stories = <%-JSON.stringify(stories)%>;
+  self.addItems(featured);
+  // self.addTV(stories);
+  self.wod('<%=wod%>');
+
+  self.addAmazon(pageAmazon);
+
+}
+
+ko.applyBindings(new PageModel());
+
+</script>
